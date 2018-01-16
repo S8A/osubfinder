@@ -1,19 +1,28 @@
 package io.github.s8a.osubfinder;
 
 /**
+ * OpenSubtitlesHasher
  * Hash code is based on Media Player Classic. In natural language 
  * it calculates: size + 64bit checksum of the first and last 64k 
  * (even if they overlap because the file is smaller than 128k).
+ *
+ * @author OpenSubtitles.org
  */
-public class OpenSubtitlesHasher {
+class OpenSubtitlesHasher {
     
-    /**
-     * Size of the chunks that will be hashed in bytes (64 KB)
-     */
+    /** Size of the chunks that will be hashed in bytes (64 KB) */
     private static final int HASH_CHUNK_SIZE = 64 * 1024;
     
-    
-    public static String computeHash(File file) throws IOException {
+    /**
+     * Computes hash of given video file.
+     *
+     * @param file Video file to be hashed.
+     *
+     * @return Hash code of video file.
+     *
+     * @throws IOException If there is a problem reading the file.
+     */
+    static String computeHash(File file) throws IOException {
         long size = file.length();
         long chunkSizeForFile = Math.min(HASH_CHUNK_SIZE, size);
         
@@ -31,11 +40,19 @@ public class OpenSubtitlesHasher {
             fileChannel.close();
         }
     }
-    
 
-    public static String computeHash(InputStream stream, long length) 
+    /**
+     * Computes hash of given input stream.
+     *
+     * @param stream Input stream to be hashed.
+     * @param length Length of the stream in bytes.
+     *
+     * @return Hash code of input stream.
+     *
+     * @throws IOException If there is a problem reading the stream.
+     */
+    static String computeHash(InputStream stream, long length) 
             throws IOException {
-        
         int chunkSizeForFile = (int) Math.min(HASH_CHUNK_SIZE, length);
         
         /* buffer that will contain the head and the tail chunk, 
@@ -70,11 +87,9 @@ public class OpenSubtitlesHasher {
         return String.format("%016x", length + head + tail);
     }
     
-
     private static long computeHashForChunk(ByteBuffer buffer) {
-        
-        LongBuffer longBuffer = buffer.order(
-                                    ByteOrder.LITTLE_ENDIAN).asLongBuffer();
+        LongBuffer longBuffer = buffer.order(ByteOrder.LITTLE_ENDIAN)
+                                      .asLongBuffer();
         long hash = 0;
         
         while (longBuffer.hasRemaining()) {
@@ -83,5 +98,5 @@ public class OpenSubtitlesHasher {
         
         return hash;
     }
-    
+
 }
