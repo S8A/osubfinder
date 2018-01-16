@@ -1,5 +1,9 @@
 package io.github.s8a.osubfinder;
 
+import java.io.*;
+import java.nio.*;
+import java.nio.channels.*;
+
 /**
  * OpenSubtitlesHasher
  * Hash code is based on Media Player Classic. In natural language 
