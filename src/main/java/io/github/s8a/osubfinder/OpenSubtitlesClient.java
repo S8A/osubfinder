@@ -6,7 +6,10 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 
-class BadStatusException extends Exception {}
+class BadStatusException extends Exception {
+	BadStatusException() {}
+	BadStatusException(String msg) { super(msg); }
+}
 
 
 /**
@@ -56,7 +59,7 @@ class OpenSubtitlesClient {
 		String status = exe.get("status");
 
 		if (!status.equals("200 OK")) {
-			throw new BadStatusException();
+			throw new BadStatusException(status);
 		}
 
 		return token;
@@ -77,7 +80,7 @@ class OpenSubtitlesClient {
 		HashMap<String, String> exe = client.execute("LogOut", args);
 
 		if (!status.equals("200 OK")) {
-			throw new BadStatusException();
+			throw new BadStatusException(status);
 		}
 	}
 
@@ -107,7 +110,7 @@ class OpenSubtitlesClient {
 		String status = exe.get("status");
 
 		if (!status.equals("200 OK")) {
-			throw new BadStatusException();
+			throw new BadStatusException(status);
 		}
 
 		ArrayList<HashMap<String, String>> results = exe.get("data");
@@ -140,6 +143,10 @@ class OpenSubtitlesClient {
 
 		HashMap<String, Object> exe = client.execute("DownloadSubtitles", args);
 		String status = exe.get("status");
+
+		if (!status.equals("200 OK")) {
+			throw new BadStatusException(status);
+		}
 
 		ArrayList<HashMap<String, String>> results = exe.get("data");
 
