@@ -24,7 +24,7 @@ class OpenSubtitlesClient {
 	/**
 	 * Configures the XML-RPC client to use the OpenSubtitles API.
 	 */
-	OpenSubtitlesClient() throws XmlRpcException {
+	OpenSubtitlesClient() {
 		config = new XmlRpcClientConfigImpl();
 		config.setServerURL(new URL("https://api.opensubtitles.org/xml-rpc"));
 		config.setUserAgent(USER_AGENT);
@@ -42,9 +42,13 @@ class OpenSubtitlesClient {
 	 * @param language ISO639 two-letter code.
 	 *
 	 * @return Session token. Used in later communication.
+	 *
+	 * @throws BadStatusException If the function call returns
+	 *       a status other than 200 OK.
+	 * @throws XmlRpcException If the function call fails.
 	 */
 	String login(String username, String password, String language) 
-			throws BadStatusException {
+			throws BadStatusException, XmlRpcException {
 		Object[] args = new Object[]{username, password, language, USER_AGENT};
 
 		HashMap<String, Object> exe = client.execute("LogIn", args);
@@ -63,8 +67,12 @@ class OpenSubtitlesClient {
 	 * before exiting program.
 	 *
 	 * @param token Session token.
+	 *
+	 * @throws BadStatusException If the function call returns
+	 *       a status other than 200 OK.
+	 * @throws XmlRpcException If the function call fails.
 	 */
-	void logout(String token) throws BadStatusException{
+	void logout(String token) throws BadStatusException, XmlRpcException {
 		Object[] args = new Object[]{token};
 		HashMap<String, String> exe = client.execute("LogOut", args);
 
@@ -82,10 +90,14 @@ class OpenSubtitlesClient {
 	 * @param limit Limit of total results (must be less than 500).
 	 *
 	 * @return HashMap of subtitle file IDs and filenames.
+	 *
+	 * @throws BadStatusException If the function call returns
+	 *       a status other than 200 OK.
+	 * @throws XmlRpcException If the function call fails.
 	 */
 	HashMap<String, String> searchSubtitles(String token, 
-				ArrayList<ArrayList<String>> queries, 
-				int limit) throws BadStatusException {
+			ArrayList<ArrayList<String>> queries, int limit) 
+			throws BadStatusException, XmlRpcException {
 		List args = new ArrayList();
 		args.add(token);
 		args.add(queries);
@@ -116,9 +128,14 @@ class OpenSubtitlesClient {
 	 * @param subtitles List of subtitle file IDs to download.
 	 *
 	 * @return Base64-encoded gzipped subtitle files mapped to IDs.
+	 *
+	 * @throws BadStatusException If the function call returns
+	 *       a status other than 200 OK.
+	 * @throws XmlRpcException If the function call fails.
 	 */
-	HashMap<String, String> downloadSubtitles(String token, 
-			ArrayList<String> subtitles) throws BadStatusException {
+	HashMap<String, String> downloadSubtitles(
+			String token, ArrayList<String> subtitles) 
+			throws BadStatusException, XmlRpcException {
 		Object[] args = new Object[]{token, subtitles};
 
 		HashMap<String, Object> exe = client.execute("DownloadSubtitles", args);
