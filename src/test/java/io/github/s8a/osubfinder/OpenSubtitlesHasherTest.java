@@ -4,8 +4,10 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
-import java.io.*;
+
 
 /**
  * Unit test for the OpenSubtitles.org hash function.
@@ -24,14 +26,14 @@ public class OpenSubtitlesHasherTest extends TestCase {
     }
 
     /**
-     * @return the suite of tests being tested
+     * @return The suite of tests being tested.
      */
     public static Test suite() {
         return new TestSuite(OpenSubtitlesHasherTest.class);
     }
 
     /**
-     * Rigourous Test :-)
+     * Tests the OpenSubtitles hash function for input streams.
      */
     public void testStreamHasher() {
         String vid = "http://www.opensubtitles.org/addons/avi/breakdance.avi";
@@ -42,6 +44,9 @@ public class OpenSubtitlesHasherTest extends TestCase {
         assertEquals(hasherResult, hash);
     }
 
+    /**
+     * Testes the OpenSubtitles hash function for files.
+     */
     public void testFileHasher() {
         URL url = getClass().getClassLoader().getResource("breakdance.avi");
         File video = new File(url.toURI());

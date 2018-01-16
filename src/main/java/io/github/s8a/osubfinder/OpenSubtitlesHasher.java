@@ -1,8 +1,14 @@
 package io.github.s8a.osubfinder;
 
-import java.io.*;
-import java.nio.*;
-import java.nio.channels.*;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.channels.FileChannel;
+import java.nio.LongBuffer;
+
 
 /**
  * OpenSubtitlesHasher
