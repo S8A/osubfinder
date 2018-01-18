@@ -1,9 +1,11 @@
 package io.github.s8a.osubfinder;
 
+import java.net.URL;
+import java.net.MalformedURLException;
 import java.util.*;
-import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.apache.xmlrpc.XmlRpcException;
 
 
 class BadStatusException extends Exception {
@@ -27,7 +29,7 @@ class OpenSubtitlesClient {
 	/**
 	 * Configures the XML-RPC client to use the OpenSubtitles API.
 	 */
-	OpenSubtitlesClient() {
+	OpenSubtitlesClient() throws MalformedURLException {
 		config = new XmlRpcClientConfigImpl();
 		config.setServerURL(new URL("https://api.opensubtitles.org/xml-rpc"));
 		config.setUserAgent(USER_AGENT);
@@ -54,9 +56,10 @@ class OpenSubtitlesClient {
 			throws BadStatusException, XmlRpcException {
 		Object[] args = new Object[]{username, password, language, USER_AGENT};
 
-		HashMap<String, Object> exe = client.execute("LogIn", args);
-		String token = exe.get("token");
-		String status = exe.get("status");
+		HashMap<String, Object> exe = 
+				(HashMap<String, Object>) client.execute("LogIn", args);
+		String token = (String) exe.get("token");
+		String status = (String) exe.get("status");
 
 		if (!status.equals("200 OK")) {
 			throw new BadStatusException(status);
@@ -77,7 +80,9 @@ class OpenSubtitlesClient {
 	 */
 	void logout(String token) throws BadStatusException, XmlRpcException {
 		Object[] args = new Object[]{token};
-		HashMap<String, String> exe = client.execute("LogOut", args);
+		HashMap<String, String> exe = 
+				(HashMap<String, String>) client.execute("LogOut", args);
+		String status = (String) exe.get("status");
 
 		if (!status.equals("200 OK")) {
 			throw new BadStatusException(status);
@@ -99,21 +104,20 @@ class OpenSubtitlesClient {
 	 * @throws XmlRpcException If the function call fails.
 	 */
 	HashMap<String, String> searchSubtitles(String token, 
-			ArrayList<ArrayList<String>> queries, int limit) 
+			ArrayList<HashMap<String, String>> queries, int limit) 
 			throws BadStatusException, XmlRpcException {
-		List args = new ArrayList();
-		args.add(token);
-		args.add(queries);
-		args.add(new Object[]{limit});
+		Object[] args = new Object[]{token,	queries, new Object[]{limit}};
 
-		HashMap<String, Object> exe = client.execute("SearchSubtitles", args);
-		String status = exe.get("status");
+		HashMap<String, Object> exe = (HashMap<String, Object>) client.execute(
+				"SearchSubtitles", args);
+		String status = (String) exe.get("status");
 
 		if (!status.equals("200 OK")) {
 			throw new BadStatusException(status);
 		}
 
-		ArrayList<HashMap<String, String>> results = exe.get("data");
+		ArrayList<HashMap<String, String>> results = 
+				(ArrayList<HashMap<String, String>>) exe.get("data");
 
 		HashMap<String, String> subs = new HashMap<>();
 
@@ -141,14 +145,16 @@ class OpenSubtitlesClient {
 			throws BadStatusException, XmlRpcException {
 		Object[] args = new Object[]{token, subtitles};
 
-		HashMap<String, Object> exe = client.execute("DownloadSubtitles", args);
-		String status = exe.get("status");
+		HashMap<String, Object> exe = (HashMap<String, Object>) client.execute(
+				"DownloadSubtitles", args);
+		String status = (String) exe.get("status");
 
 		if (!status.equals("200 OK")) {
 			throw new BadStatusException(status);
 		}
 
-		ArrayList<HashMap<String, String>> results = exe.get("data");
+		ArrayList<HashMap<String, String>> results = 
+				(ArrayList<HashMap<String, String>>) exe.get("data");
 
 		HashMap<String, String> subs = new HashMap<>();
 

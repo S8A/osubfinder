@@ -1,11 +1,13 @@
 package io.github.s8a.osubfinder;
 
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.channels.FileChannel.MapMode;
 import java.nio.channels.FileChannel;
 import java.nio.LongBuffer;
 
